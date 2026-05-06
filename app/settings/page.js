@@ -4,61 +4,9 @@ import { db } from "@/lib/db-drizzle";
 import { school_settings, users } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
-import { setFlash } from "@/lib/flash";
 import { getSession } from "@/lib/session";
 import { cookies } from "next/headers";
-import { put } from "@vercel/blob";
-
-async function saveSettings(formData) {
-  "use server";
-
-  const cookieStore = await cookies();
-  const token = cookieStore.get("session")?.value;
-  if (!token) redirect("/login");
-
-  const session = await getSession(token);
-  if (!session) redirect("/login");
-
-  const userResult = await db.select().from(users).where(eq(users.email, session.email));
-  const user = userResult[0];
-  if (!user) redirect("/login");
-
-  // पुरानी settings लाओ — logo URL बचाने के लिए
-  const existing = await db.select().from(school_settings).where(eq(school_settings.user_id, user.id));
-  const current = existing[0] || {};
-
-  // Logo upload
-  let logo_url = current.logo_url || null;
-  const logoFile = formData.get("logo");
-  if (logoFile && logoFile.size > 0) {
-    const blob = await put(`logos/${user.id}/${logoFile.name}`, logoFile, {
-      access: "public",
-    });
-    logo_url = blob.url;
-  }
-
-  const data = {
-    user_id: user.id,
-    school_name: formData.get("school_name"),
-    address: formData.get("address"),
-    phone: formData.get("phone"),
-    email: formData.get("email"),
-    principal_name: formData.get("principal_name"),
-    affiliation_no: formData.get("affiliation_no"),
-    school_code: formData.get("school_code"),
-    logo_url: logo_url,
-    updated_at: new Date(),
-  };
-
-  if (existing.length > 0) {
-    await db.update(school_settings).set(data).where(eq(school_settings.user_id, user.id));
-  } else {
-    await db.insert(school_settings).values(data);
-  }
-
-  await setFlash("success", "Settings saved successfully!");
-  redirect("/settings");
-}
+import { saveSettings } from "@/app/actions";
 
 export default async function SettingsPage() {
   const cookieStore = await cookies();
