@@ -8,7 +8,7 @@ import { cookies } from "next/headers";
 import { getSession } from "@/lib/session";
 import { setFlash } from "@/lib/flash";
 import { z } from "zod";
-import { put } from '@vercel/blob'
+import { put } from "@vercel/blob";
 
 // ─── Auth Helper ────────────────────────────────────────────────────────────
 
@@ -510,39 +510,49 @@ const settingsSchema = z.object({
   logo_url: z.string().optional(),
 });
 export async function saveSettings(formData) {
-  const session = await getAuth()
+  const session = await getAuth();
 
-  const userResult = await db.select().from(schema.users).where(eq(schema.users.email, session.email))
-  const user = userResult[0]
-  if (!user) redirect('/login')
+  const userResult = await db
+    .select()
+    .from(schema.users)
+    .where(eq(schema.users.email, session.email));
+  const user = userResult[0];
+  if (!user) redirect("/login");
 
-  const existing = await db.select().from(schema.school_settings).where(eq(schema.school_settings.user_id, user.id))
-  const current = existing[0] || {}
+  const existing = await db
+    .select()
+    .from(schema.school_settings)
+    .where(eq(schema.school_settings.user_id, user.id));
+  const current = existing[0] || {};
 
-  let logo_url = current.logo_url || null
-  const logoFile = formData.get('logo')
+  let logo_url = current.logo_url || null;
+  const logoFile = formData.get("logo");
   if (logoFile && logoFile.size > 0) {
-    const { put } = await import('@vercel/blob')
+    const { put } = await import("@vercel/blob");
     const blob = await put(`logos/${user.id}/${logoFile.name}`, logoFile, {
-      access: 'public',
-    })
-    logo_url = blob.url
+      access: "public",
+      allowOverwrite: true,
+    });
+    logo_url = blob.url;
   }
 
   const raw = {
-    school_name: formData.get('school_name'),
-    address: formData.get('address') || undefined,
-    phone: formData.get('phone') || undefined,
-    email: formData.get('email') || undefined,
-    principal_name: formData.get('principal_name') || undefined,
-    affiliation_no: formData.get('affiliation_no') || undefined,
-    school_code: formData.get('school_code') || undefined,
-  }
+    school_name: formData.get("school_name"),
+    address: formData.get("address") || undefined,
+    phone: formData.get("phone") || undefined,
+    email: formData.get("email") || undefined,
+    principal_name: formData.get("principal_name") || undefined,
+    affiliation_no: formData.get("affiliation_no") || undefined,
+    school_code: formData.get("school_code") || undefined,
+  };
 
-  const parsed = settingsSchema.safeParse(raw)
+  const parsed = settingsSchema.safeParse(raw);
   if (!parsed.success) {
-    await setFlash('error', 'Invalid data: ' + JSON.stringify(parsed.error.flatten().fieldErrors))
-    redirect('/settings')
+    await setFlash(
+      "error",
+      "Invalid data: " + JSON.stringify(parsed.error.flatten().fieldErrors),
+    );
+    redirect("/settings");
   }
 
   const data = {
@@ -550,14 +560,17 @@ export async function saveSettings(formData) {
     ...parsed.data,
     logo_url,
     updated_at: new Date(),
-  }
+  };
 
   if (existing.length > 0) {
-    await db.update(schema.school_settings).set(data).where(eq(schema.school_settings.user_id, user.id))
+    await db
+      .update(schema.school_settings)
+      .set(data)
+      .where(eq(schema.school_settings.user_id, user.id));
   } else {
-    await db.insert(schema.school_settings).values(data)
+    await db.insert(schema.school_settings).values(data);
   }
 
-  await setFlash('success', 'Settings saved successfully!')
-  redirect('/settings')
+  await setFlash("success", "Settings saved successfully!");
+  redirect("/settings");
 }
