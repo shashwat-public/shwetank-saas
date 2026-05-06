@@ -6,27 +6,7 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db-drizzle";
 import { transport } from "@/lib/schema";
 import { setFlash } from "@/lib/flash";
-
-async function addRoute(formData) {
-  "use server";
-
-  const route_name = formData.get("route_name");
-  const stop_name = formData.get("stop_name");
-  const monthly_fee = parseFloat(formData.get("monthly_fee")) || 0;
-  const driver_name = formData.get("driver_name") || null;
-  const vehicle_no = formData.get("vehicle_no") || null;
-
-  await db.insert(transport).values({
-    route_name,
-    stop_name,
-    monthly_fee,
-    driver_name,
-    vehicle_no,
-  });
-
-  await setFlash("success", "Route added successfully!");
-  redirect("/transport");
-}
+import { addRoute } from '@/app/actions'
 
 export default async function AddRoutePage() {
   return (

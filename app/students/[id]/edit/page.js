@@ -8,57 +8,7 @@ import { students } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { setFlash } from "@/lib/flash";
-
-async function updateStudent(formData) {
-  "use server";
-
-  const id = formData.get("id");
-  const name = formData.get("name");
-  const className = formData.get("class");
-  const section = formData.get("section");
-  const rollNumber = formData.get("roll_number");
-  const parentName = formData.get("parent_name");
-  const parentPhone = formData.get("parent_phone");
-  const feeStatus = formData.get("fee_status");
-  const password = formData.get("password");
-  const admission_no = formData.get("admission_no") || null;
-  const gender = formData.get("gender") || null;
-  const dob = formData.get("dob") || null;
-  const mother_name = formData.get("mother_name") || null;
-  const address = formData.get("address") || null;
-  const religion = formData.get("religion") || null;
-  const caste = formData.get("caste") || null;
-  const aadhaar = formData.get("aadhaar") || null;
-  const academic_year = formData.get("academic_year") || null;
-
-  const updateData = {
-    name,
-    class: className,
-    section,
-    roll_number: rollNumber,
-    parent_name: parentName,
-    parent_phone: parentPhone,
-    fee_status: feeStatus,
-    admission_no,
-    gender,
-    dob,
-    mother_name,
-    address,
-    religion,
-    caste,
-    aadhaar,
-    academic_year,
-  };
-
-  if (password && password.trim() !== "") {
-    updateData.password = password.trim();
-  }
-
-  await db.update(students).set(updateData).where(eq(students.id, Number(id)));
-
-  await setFlash("success", "Student updated successfully!");
-  redirect(`/students/${id}`);
-}
+import { updateStudent } from '@/app/actions'
 
 export default async function EditStudentPage({ params }) {
   const { id } = await params;

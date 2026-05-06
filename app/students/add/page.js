@@ -2,50 +2,7 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db-drizzle";
 import { students } from "@/lib/schema";
 import { setFlash } from "@/lib/flash";
-
-async function addStudent(formData) {
-  "use server";
-
-  const name = formData.get("name");
-  const className = formData.get("class");
-  const section = formData.get("section");
-  const rollNumber = formData.get("roll_number");
-  const parentName = formData.get("parent_name");
-  const parentPhone = formData.get("parent_phone");
-  const admission_no = formData.get("admission_no") || null;
-  const admission_date = formData.get("admission_date") || null;
-  const gender = formData.get("gender") || null;
-  const dob = formData.get("dob") || null;
-  const mother_name = formData.get("mother_name") || null;
-  const address = formData.get("address") || null;
-  const religion = formData.get("religion") || null;
-  const caste = formData.get("caste") || null;
-  const aadhaar = formData.get("aadhaar") || null;
-  const academic_year = formData.get("academic_year") || null;
-
-  await db.insert(students).values({
-    name,
-    class: className,
-    section,
-    roll_number: rollNumber,
-    parent_name: parentName,
-    parent_phone: parentPhone,
-    fee_status: "pending",
-    admission_no,
-    admission_date,
-    gender,
-    dob,
-    mother_name,
-    address,
-    religion,
-    caste,
-    aadhaar,
-    academic_year,
-  });
-
-  await setFlash("success", "Student added successfully!");
-  redirect("/students");
-}
+import { addStudent } from '@/app/actions'
 
 export default async function AddStudentPage() {
   const allStudents = await db.select({ class: students.class }).from(students);

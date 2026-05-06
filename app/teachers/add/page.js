@@ -2,21 +2,7 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db-drizzle";
 import { teachers } from "@/lib/schema";
 import { setFlash } from "@/lib/flash";
-
-async function addTeacher(formData) {
-  "use server";
-
-  const name = formData.get("name");
-  const subject = formData.get("subject");
-  const qualification = formData.get("qualification");
-  const phone = formData.get("phone");
-  const email = formData.get("email");
-
-  await db.insert(teachers).values({ name, subject, qualification, phone, email });
-
-  await setFlash("success", "Teacher added successfully!");
-  redirect("/teachers");
-}
+import { addTeacher } from '@/app/actions'
 
 export default function AddTeacherPage() {
   return (

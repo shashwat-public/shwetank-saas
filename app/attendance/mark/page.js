@@ -5,33 +5,7 @@ import { students, attendance } from "@/lib/schema";
 import { eq, and } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { setFlash } from "@/lib/flash";
-
-async function saveAttendance(formData) {
-  "use server";
-
-  const date = formData.get("date");
-  const studentIds = formData.getAll("student_id");
-  const presentIds = formData.getAll("present");
-
-  for (const id of studentIds) {
-    const status = presentIds.includes(id) ? "present" : "absent";
-
-    const existing = await db.select().from(attendance).where(
-      and(eq(attendance.student_id, parseInt(id)), eq(attendance.date, date))
-    );
-
-    if (existing.length > 0) {
-      await db.update(attendance).set({ status }).where(
-        and(eq(attendance.student_id, parseInt(id)), eq(attendance.date, date))
-      );
-    } else {
-      await db.insert(attendance).values({ student_id: parseInt(id), date, status });
-    }
-  }
-
-  await setFlash("success", "Attendance saved!");
-  redirect("/attendance");
-}
+import { saveAttendance } from '@/app/actions'
 
 export default async function MarkAttendancePage({ searchParams }) {
   const params = await searchParams;

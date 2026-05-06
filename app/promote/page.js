@@ -5,30 +5,7 @@ import { db } from "@/lib/db-drizzle";
 import { students } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import { setFlash } from "@/lib/flash";
-
-async function promoteStudents(formData) {
-  "use server";
-
-  const from_class = formData.get("from_class");
-  const to_class = formData.get("to_class");
-  const new_academic_year = formData.get("new_academic_year");
-
-  if (!from_class || !to_class || !new_academic_year) {
-    redirect("/promote");
-  }
-
-  await db
-    .update(students)
-    .set({
-      class: to_class,
-      academic_year: new_academic_year,
-      fee_status: "pending",
-    })
-    .where(eq(students.class, from_class));
-
-  await setFlash("success", `Class ${from_class} → Class ${to_class} promotion हो गई!`);
-  redirect("/promote");
-}
+import { promoteStudents } from '@/app/actions'
 
 export default async function PromotePage() {
   const allStudents = await db.select().from(students);

@@ -41,6 +41,7 @@
   },
   "dependencies": {
     "@libsql/client": "^0.14.0",
+    "@vercel/blob": "^2.3.3",
     "arctic": "^3.7.0",
     "bcryptjs": "^2.4.3",
     "drizzle-orm": "^0.38.4",
@@ -49,7 +50,8 @@
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "resend": "^6.9.4"
+    "resend": "^6.9.4",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

@@ -3,44 +3,7 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db-drizzle";
 import { students } from "@/lib/schema";
 import { setFlash } from "@/lib/flash";
-
-async function importStudents(formData) {
-  "use server";
-
-  const csvText = formData.get("csv_data");
-  if (!csvText) {
-    await setFlash("error", "कोई data नहीं मिला।");
-    redirect("/students/import");
-  }
-
-  const lines = csvText.trim().split("\n").filter(Boolean);
-  // पहली row header है — skip
-  const dataLines = lines[0]?.toLowerCase().includes("name") ? lines.slice(1) : lines;
-
-  let count = 0;
-  for (const line of dataLines) {
-    const cols = line.split(",").map((c) => c.trim().replace(/^"|"$/g, ""));
-    const [name, className, section, roll_number, parent_name, parent_phone] = cols;
-    if (!name || !className) continue;
-    try {
-      await db.insert(students).values({
-        name,
-        class: className,
-        section: section || "",
-        roll_number: roll_number || null,
-        parent_name: parent_name || null,
-        parent_phone: parent_phone || null,
-        fee_status: "pending",
-      });
-      count++;
-    } catch (e) {
-      // duplicate roll_number skip
-    }
-  }
-
-  await setFlash("success", `${count} students import हो गए!`);
-  redirect("/students");
-}
+import { importStudents } from '@/app/actions'
 
 export default function ImportPage() {
   return (

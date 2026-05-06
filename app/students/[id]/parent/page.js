@@ -6,28 +6,7 @@ import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { notFound } from "next/navigation";
 import { setFlash } from "@/lib/flash";
-
-async function saveParent(formData) {
-  "use server";
-
-  const student_id = parseInt(formData.get("student_id"));
-  const name = formData.get("name");
-  const phone = formData.get("phone");
-  const email = formData.get("email");
-  const password = formData.get("password");
-
-  const existing = await db.select().from(parents).where(eq(parents.student_id, student_id));
-
-  if (existing.length > 0) {
-    await db.update(parents).set({ name, phone, email, password }).where(eq(parents.student_id, student_id));
-    await setFlash("success", "Parent account updated successfully!");
-  } else {
-    await db.insert(parents).values({ student_id, name, phone, email, password });
-    await setFlash("success", "Parent account created successfully!");
-  }
-
-  redirect("/students");
-}
+import { saveParent } from '@/app/actions'
 
 export default async function CreateParentPage({ params }) {
   const { id } = await params;

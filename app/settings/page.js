@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 import { setFlash } from "@/lib/flash";
 import { getSession } from "@/lib/session";
 import { cookies } from "next/headers";
+import { put } from "@vercel/blob";
 
 async function saveSettings(formData) {
   "use server";
@@ -22,6 +23,20 @@ async function saveSettings(formData) {
   const user = userResult[0];
   if (!user) redirect("/login");
 
+  // पुरानी settings लाओ — logo URL बचाने के लिए
+  const existing = await db.select().from(school_settings).where(eq(school_settings.user_id, user.id));
+  const current = existing[0] || {};
+
+  // Logo upload
+  let logo_url = current.logo_url || null;
+  const logoFile = formData.get("logo");
+  if (logoFile && logoFile.size > 0) {
+    const blob = await put(`logos/${user.id}/${logoFile.name}`, logoFile, {
+      access: "public",
+    });
+    logo_url = blob.url;
+  }
+
   const data = {
     user_id: user.id,
     school_name: formData.get("school_name"),
@@ -31,11 +46,9 @@ async function saveSettings(formData) {
     principal_name: formData.get("principal_name"),
     affiliation_no: formData.get("affiliation_no"),
     school_code: formData.get("school_code"),
-    logo_url: formData.get("logo_url"),
+    logo_url: logo_url,
     updated_at: new Date(),
   };
-
-  const existing = await db.select().from(school_settings).where(eq(school_settings.user_id, user.id));
 
   if (existing.length > 0) {
     await db.update(school_settings).set(data).where(eq(school_settings.user_id, user.id));
@@ -70,7 +83,7 @@ export default async function SettingsPage() {
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 max-w-2xl">
-        <form action={saveSettings} className="space-y-6">
+        <form action={saveSettings} encType="multipart/form-data" className="space-y-6">
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -119,13 +132,13 @@ export default async function SettingsPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Logo URL</label>
-            <input type="url" name="logo_url" defaultValue={s.logo_url || ""}
-              placeholder="https://..."
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            <label className="block text-sm font-medium text-gray-700 mb-1">School Logo</label>
             {s.logo_url && (
-              <img src={s.logo_url} alt="logo" className="mt-3 h-16 object-contain" />
+              <img src={s.logo_url} alt="Current Logo" className="mb-3 h-16 object-contain" />
             )}
+            <input type="file" name="logo" accept="image/*"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm" />
+            <p className="text-xs text-gray-400 mt-1">PNG, JPG supported. Max 4.5MB.</p>
           </div>
 
           <div className="pt-2">
@@ -134,6 +147,7 @@ export default async function SettingsPage() {
               Save Settings
             </button>
           </div>
+
         </form>
       </div>
     </div>

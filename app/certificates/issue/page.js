@@ -6,35 +6,7 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db-drizzle";
 import { certificates, students } from "@/lib/schema";
 import { setFlash } from "@/lib/flash";
-
-async function issueCertificate(formData) {
-  "use server";
-
-  const student_id = parseInt(formData.get("student_id"));
-  const cert_type = formData.get("cert_type");
-  const issue_date = formData.get("issue_date");
-  const serial_no = formData.get("serial_no") || null;
-  const reason = formData.get("reason") || null;
-  const last_class = formData.get("last_class") || null;
-  const last_exam_passed = formData.get("last_exam_passed") || null;
-  const conduct = formData.get("conduct") || "Good";
-  const custom_content = formData.get("custom_content") || null;
-
-  await db.insert(certificates).values({
-    student_id,
-    cert_type,
-    issue_date,
-    serial_no,
-    reason,
-    last_class,
-    last_exam_passed,
-    conduct,
-    custom_content,
-  });
-
-  await setFlash("success", "Certificate issued successfully!");
-  redirect("/certificates");
-}
+import { issueCertificate } from '@/app/actions'
 
 export default async function IssueCertificatePage() {
   const allStudents = await db

@@ -4,22 +4,7 @@ import { db } from "@/lib/db-drizzle";
 import { exams, students } from "@/lib/schema";
 import { redirect } from "next/navigation";
 import { setFlash } from "@/lib/flash";
-
-async function createExam(formData) {
-  "use server";
-
-  const name = formData.get("name");
-  const className = formData.get("class");
-  const subject = formData.get("subject");
-  const exam_date = formData.get("exam_date");
-  const max_marks = parseInt(formData.get("max_marks"));
-  const passing_marks = parseInt(formData.get("passing_marks"));
-
-  await db.insert(exams).values({ name, class: className, subject, exam_date, max_marks, passing_marks });
-
-  await setFlash("success", "Exam scheduled successfully!");
-  redirect("/exams");
-}
+import { createExam } from '@/app/actions'
 
 export default async function AddExamPage() {
   const allStudents = await db.select().from(students);

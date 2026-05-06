@@ -6,43 +6,7 @@ import { eq, and } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { notFound } from "next/navigation";
 import { setFlash } from "@/lib/flash";
-
-async function saveResults(formData) {
-  "use server";
-
-  const exam_id = parseInt(formData.get("exam_id"));
-  const studentIds = formData.getAll("student_id");
-
-  for (const sid of studentIds) {
-    const marks = formData.get(`marks_${sid}`);
-    const remarks = formData.get(`remarks_${sid}`) || "";
-    if (marks === "" || marks === null) continue;
-
-    const marksNum = parseFloat(marks);
-
-    let grade = "F";
-    if (marksNum >= 90) grade = "A+";
-    else if (marksNum >= 75) grade = "A";
-    else if (marksNum >= 60) grade = "B";
-    else if (marksNum >= 45) grade = "C";
-    else if (marksNum >= 33) grade = "D";
-
-    const existing = await db.select().from(results).where(
-      and(eq(results.exam_id, exam_id), eq(results.student_id, parseInt(sid)))
-    );
-
-    if (existing.length > 0) {
-      await db.update(results).set({ marks_obtained: marksNum, grade, remarks }).where(
-        and(eq(results.exam_id, exam_id), eq(results.student_id, parseInt(sid)))
-      );
-    } else {
-      await db.insert(results).values({ exam_id, student_id: parseInt(sid), marks_obtained: marksNum, grade, remarks });
-    }
-  }
-
-  await setFlash("success", "Marks saved successfully!");
-  redirect("/exams");
-}
+import { saveResults } from '@/app/actions'
 
 export default async function MarksEntryPage({ params }) {
   const { id } = await params;

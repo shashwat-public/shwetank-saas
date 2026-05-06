@@ -4,23 +4,7 @@ import { db } from "@/lib/db-drizzle";
 import { timetable, students, teachers } from "@/lib/schema";
 import { redirect } from "next/navigation";
 import { setFlash } from "@/lib/flash";
-
-async function addPeriod(formData) {
-  "use server";
-
-  const className = formData.get("class");
-  const day = formData.get("day");
-  const period = parseInt(formData.get("period"));
-  const subject = formData.get("subject");
-  const teacher_name = formData.get("teacher_name");
-  const start_time = formData.get("start_time");
-  const end_time = formData.get("end_time");
-
-  await db.insert(timetable).values({ class: className, day, period, subject, teacher_name, start_time, end_time });
-
-  await setFlash("success", "Period added successfully!");
-  redirect(`/timetable?class=${className}`);
-}
+import { addPeriod } from '@/app/actions'
 
 export default async function AddPeriodPage({ searchParams }) {
   const params = await searchParams;

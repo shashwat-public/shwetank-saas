@@ -4,35 +4,7 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db-drizzle";
 import { fees, students } from "@/lib/schema";
 import { setFlash } from "@/lib/flash";
-
-async function addPayment(formData) {
-  "use server";
-
-  const studentId = parseInt(formData.get("student_id"));
-  const amount = parseFloat(formData.get("amount"));
-  const dueDate = formData.get("due_date");
-  const paidDate = formData.get("paid_date") || null;
-  const status = paidDate ? "paid" : "pending";
-  const fee_type = formData.get("fee_type") || "tuition";
-  const academic_year = formData.get("academic_year") || null;
-  const month = formData.get("month") || null;
-  const receipt_no = formData.get("receipt_no") || null;
-
-  await db.insert(fees).values({
-    student_id: studentId,
-    amount,
-    due_date: new Date(dueDate),
-    paid_date: paidDate ? new Date(paidDate) : null,
-    status,
-    fee_type,
-    academic_year,
-    month,
-    receipt_no,
-  });
-
-  await setFlash("success", "Fee record saved successfully!");
-  redirect("/fees");
-}
+import { addPayment } from '@/app/actions'
 
 export default async function AddFeePage() {
   const allStudents = await db.select().from(students).orderBy(students.class, students.name);

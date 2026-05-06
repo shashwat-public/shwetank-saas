@@ -6,30 +6,7 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db-drizzle";
 import { transport, student_transport, students } from "@/lib/schema";
 import { setFlash } from "@/lib/flash";
-
-async function assignStudent(formData) {
-  "use server";
-
-  const student_id = parseInt(formData.get("student_id"));
-  const transport_id = parseInt(formData.get("transport_id"));
-
-  if (!student_id || !transport_id) {
-    redirect("/transport");
-  }
-
-  const academic_year = formData.get("academic_year") || null;
-  const joined_date = formData.get("joined_date") || null;
-
-  await db.insert(student_transport).values({
-    student_id,
-    transport_id,
-    academic_year,
-    joined_date,
-  });
-
-  await setFlash("success", "Student assigned to transport successfully!");
-  redirect("/transport");
-}
+import { assignStudent } from '@/app/actions'
 
 export default async function AssignTransportPage() {
   const allStudents = await db

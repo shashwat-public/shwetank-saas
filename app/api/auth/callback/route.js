@@ -110,11 +110,9 @@ export async function GET(request) {
       user.expiry_date,
     );
 
-    // ✅ Fix 3: Developer check सिर्फ एक line, session बनने के बाद
-    if (user.email === "prasad.kamta@gmail.com") {
+    if (user.email === process.env.DEVELOPER_EMAIL) {
       return redirectWithCookie(request, "/dashboard", token);
     }
-
     if (user.status === "active") {
       return redirectWithCookie(request, "/dashboard", token);
     }

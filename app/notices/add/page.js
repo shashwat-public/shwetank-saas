@@ -2,20 +2,7 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db-drizzle";
 import { notices } from "@/lib/schema";
 import { setFlash } from "@/lib/flash";
-
-async function createNotice(formData) {
-  "use server";
-
-  const title = formData.get("title");
-  const content = formData.get("content");
-  const category = formData.get("category");
-  const priority = formData.get("priority");
-
-  await db.insert(notices).values({ title, content, category, priority });
-
-  await setFlash("success", "Notice posted successfully!");
-  redirect("/notices");
-}
+import { createNotice } from '@/app/actions'
 
 export default function AddNoticePage() {
   return (
