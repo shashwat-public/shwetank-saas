@@ -10,13 +10,13 @@ import { getSession } from "@/lib/session";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "निशांत स्कूल सॉफ्टवेयर",
-  description: "विद्यालय प्रबंधन सॉफ्टवेयर",
+  title: "Nishant School Software",
+  description: "School Management System",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "निशांत स्कूल सॉफ्टवेयर",
+    title: "Nishant School Software",
   },
   icons: {
     apple: "/icon-192.png",
@@ -36,7 +36,7 @@ export default async function RootLayout({ children }) {
   const user = token ? await getSession(token) : null;
 
   return (
-    <html lang="hi">
+    <html lang="en">
       <body className={`${inter.className} min-h-screen bg-gray-100`}>
         <script
           dangerouslySetInnerHTML={{
@@ -50,10 +50,10 @@ export default async function RootLayout({ children }) {
             <aside className="hidden md:flex w-64 bg-indigo-900 text-white flex-col fixed h-full overflow-y-auto">
               <div className="px-6 py-5 border-b border-indigo-800">
                 <div className="text-2xl font-bold text-white">
-                  निशांत स्कूल
+                  Nishant School
                 </div>
                 <div className="text-indigo-300 text-xs mt-1">
-                  विद्यालय प्रबंधन सॉफ्टवेयर
+                  Management Software
                 </div>
               </div>
               <nav className="px-4 py-6 space-y-1 flex-1">
@@ -150,7 +150,7 @@ export default async function RootLayout({ children }) {
                 <form action="/logout" method="POST">
                   <button
                     type="submit"
-                    className="flex items-center gap-3 px-4 py-3 rounded-lg text-red-300 hover:bg-indigo-800 transition text-sm font-medium w-full"
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg text-red-300 hover:bg-indigo-800 transition text-sm font-medium w-full text-left"
                   >
                     🚪 Logout
                   </button>
@@ -159,7 +159,7 @@ export default async function RootLayout({ children }) {
             </aside>
 
             <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-indigo-900 flex items-center justify-between px-4 py-3 shadow-md">
-              <div className="text-white font-bold text-lg">निशांत स्कूल</div>
+              <div className="text-white font-bold text-lg">Nishant School</div>
               <div className="flex items-center gap-3">
                 <form action="/logout" method="POST">
                   <button type="submit" className="text-red-300 text-sm">
@@ -272,7 +272,7 @@ export default async function RootLayout({ children }) {
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center h-16">
                   <div className="text-xl font-bold text-indigo-600">
-                    निशांत स्कूल सॉफ्टवेयर
+                    Nishant School Software
                   </div>
                 </div>
               </div>
@@ -280,25 +280,6 @@ export default async function RootLayout({ children }) {
             <main>{children}</main>
           </div>
         )}
-
-        <div
-          id="google_translate_element"
-          className="fixed bottom-20 right-4 z-50 md:bottom-4"
-        />
-        <Script
-          src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
-          strategy="afterInteractive"
-        />
-        <Script id="google-translate-init" strategy="afterInteractive">
-          {`
-            function googleTranslateElementInit() {
-              new google.translate.TranslateElement(
-                { pageLanguage: 'hi', includedLanguages: 'en,hi', layout: google.translate.TranslateElement.InlineLayout.SIMPLE },
-                'google_translate_element'
-              );
-            }
-          `}
-        </Script>
       </body>
     </html>
   );
