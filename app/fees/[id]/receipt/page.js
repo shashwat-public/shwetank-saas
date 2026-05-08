@@ -1,6 +1,8 @@
 import { db } from "@/lib/db";
-import { fees, students, school_settings } from "@/lib/schema";
+import { fees, students, school_settings, users } from "@/lib/schema";
 import { eq } from "drizzle-orm";
+import { cookies } from "next/headers";
+import { getSession } from "@/lib/session";
 import PrintButton from "./PrintButton";
 
 export default async function FeeReceiptPage({ params }) {
@@ -28,7 +30,19 @@ export default async function FeeReceiptPage({ params }) {
   if (fee.status !== "paid")
     return <div className="p-8 text-yellow-600">This fee is not paid yet.</div>;
 
-  const settingsResult = await db.select().from(school_settings);
+  const cookieStore = await cookies();
+  const token = cookieStore.get("session")?.value;
+  const session = token ? await getSession(token) : null;
+  const userResult = session
+    ? await db.select().from(users).where(eq(users.email, session.email))
+    : [];
+  const user = userResult[0] || null;
+  const settingsResult = user
+    ? await db
+        .select()
+        .from(school_settings)
+        .where(eq(school_settings.user_id, user.id))
+    : [];
   const settings = settingsResult[0] || {};
 
   const receiptNo = `RCP-${String(fee.id).padStart(5, "0")}`;
