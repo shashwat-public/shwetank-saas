@@ -42,8 +42,8 @@ const features = [
   },
   {
     icon: "👨‍👩‍👧",
-    title: "Parent Portal",
-    desc: "Parents check their child's fees, attendance and exam results from their mobile — without coming to school.",
+    title: "Guardian Portal",
+    desc: "Guardians check their child's fees, attendance and exam results from their mobile — without coming to school.",
   },
   {
     icon: "🚌",
@@ -58,7 +58,7 @@ const features = [
   {
     icon: "📣",
     title: "Notice Board",
-    desc: "Post school notices with priority. Urgent notices shown with red badge. Parents see them instantly on their portal.",
+    desc: "Post school notices with priority. Urgent notices shown with red badge. Guardians see them instantly on their portal.",
   },
   {
     icon: "📱",
@@ -130,7 +130,7 @@ export default async function HomePage() {
             </Link>
             <Link href="/parent/login"
               className="bg-white text-indigo-600 px-8 py-3 rounded-lg hover:bg-indigo-50 font-medium text-sm border border-indigo-200">
-              Parent Login
+              Guardian Login
             </Link>
           </div>
         </div>
@@ -205,7 +205,7 @@ export default async function HomePage() {
                 className="block w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 transition mb-3 text-sm">
                 Try Free for 7 Days
               </Link>
-              <a href="https://wa.me/919996865069" target="_blank" rel="noopener noreferrer"
+              <a href="https://nishantsoftwares.in/school" target="_blank" rel="noopener noreferrer"
                 className="block w-full bg-gray-800 text-white font-bold py-3 rounded-xl hover:bg-gray-700 transition text-sm">
                 💳 Buy Now — ₹4,999
               </a>
@@ -214,9 +214,9 @@ export default async function HomePage() {
               <h3 className="text-xl font-bold mb-1 text-gray-700 mt-2">Renewal</h3>
               <div className="text-5xl font-extrabold text-indigo-600 mb-1">₹2,500</div>
               <p className="text-gray-400 text-sm mb-4">Per year</p>
-              <a href="https://wa.me/919996865069" target="_blank" rel="noopener noreferrer"
+              <a href="https://nishantsoftwares.in/school" target="_blank" rel="noopener noreferrer"
                 className="block w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 transition text-sm">
-                💬 WhatsApp Us
+                💳 Renew Now
               </a>
             </div>
           </div>
