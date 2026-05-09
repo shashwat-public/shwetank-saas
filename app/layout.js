@@ -82,6 +82,12 @@ export default async function RootLayout({ children }) {
                   👨‍🏫 Teachers
                 </Link>
                 <Link
+                  href="/teacher-login"
+                  className="flex items-center gap-3 px-4 py-3 rounded-lg text-yellow-300 hover:bg-indigo-800 transition text-sm font-medium"
+                >
+                  🔑 Teacher Login
+                </Link>
+                <Link
                   href="/fees"
                   className="flex items-center gap-3 px-4 py-3 rounded-lg text-indigo-100 hover:bg-indigo-800 transition text-sm font-medium"
                 >
@@ -142,10 +148,16 @@ export default async function RootLayout({ children }) {
                   📊 Reports
                 </Link>
                 <Link
-                  href="/settings"
-                  className="flex items-center gap-3 px-4 py-3 rounded-lg text-indigo-100 hover:bg-indigo-800 transition text-sm font-medium"
+                  href="/teacher-login"
+                  className="flex-1 min-w-[56px] flex flex-col items-center justify-center py-2 text-[10px] font-medium text-yellow-500"
                 >
-                  ⚙️ Settings
+                  🔑<span>T-Login</span>
+                </Link>
+                <Link
+                  href="/settings"
+                  className="flex-1 min-w-[56px] flex flex-col items-center justify-center py-2 text-[10px] font-medium text-gray-500"
+                >
+                  ⚙️<span>Settings</span>
                 </Link>
                 <form action="/logout" method="POST">
                   <button

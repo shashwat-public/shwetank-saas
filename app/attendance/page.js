@@ -13,32 +13,56 @@ export default async function AttendancePage({ searchParams }) {
 
   const allStudents = await db.select().from(students);
 
-  const classes = [...new Set(allStudents.map((s) => s.class).filter(Boolean))].sort((a, b) => {
-    const na = parseInt(a), nb = parseInt(b);
-    if (!isNaN(na) && !isNaN(nb)) return na - nb;
-    return a.localeCompare(b);
-  });
+  const classes = [
+    "Nursery",
+    "KG",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12",
+  ];
 
   const filteredStudents = selectedClass
     ? allStudents.filter((s) => s.class === selectedClass)
     : allStudents;
 
-  const todayAttendance = await db.select().from(attendance).where(eq(attendance.date, selectedDate));
+  const todayAttendance = await db
+    .select()
+    .from(attendance)
+    .where(eq(attendance.date, selectedDate));
   const attendanceMap = {};
-  todayAttendance.forEach((a) => { attendanceMap[a.student_id] = a.status; });
+  todayAttendance.forEach((a) => {
+    attendanceMap[a.student_id] = a.status;
+  });
 
-  const presentCount = filteredStudents.filter((s) => attendanceMap[s.id] === "present").length;
-  const absentCount = filteredStudents.filter((s) => attendanceMap[s.id] === "absent").length;
+  const presentCount = filteredStudents.filter(
+    (s) => attendanceMap[s.id] === "present",
+  ).length;
+  const absentCount = filteredStudents.filter(
+    (s) => attendanceMap[s.id] === "absent",
+  ).length;
   const notMarked = filteredStudents.filter((s) => !attendanceMap[s.id]).length;
 
   const absentWithPhone = filteredStudents.filter(
-    (s) => attendanceMap[s.id] === "absent" && s.parent_phone
+    (s) => attendanceMap[s.id] === "absent" && s.phone,
   );
 
   const classWiseSummary = classes.map((cls) => {
     const clsStudents = allStudents.filter((s) => s.class === cls);
-    const present = clsStudents.filter((s) => attendanceMap[s.id] === "present").length;
-    const absent = clsStudents.filter((s) => attendanceMap[s.id] === "absent").length;
+    const present = clsStudents.filter(
+      (s) => attendanceMap[s.id] === "present",
+    ).length;
+    const absent = clsStudents.filter(
+      (s) => attendanceMap[s.id] === "absent",
+    ).length;
     const unmarked = clsStudents.filter((s) => !attendanceMap[s.id]).length;
     return { cls, total: clsStudents.length, present, absent, unmarked };
   });
@@ -67,8 +91,10 @@ export default async function AttendancePage({ searchParams }) {
           <h1 className="text-xl font-bold text-gray-900">Attendance</h1>
           <p className="text-gray-500 text-xs mt-0.5">{selectedDate}</p>
         </div>
-        <Link href={`/attendance/mark?date=${selectedDate}&class=${selectedClass}`}
-          className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
+        <Link
+          href={`/attendance/mark?date=${selectedDate}&class=${selectedClass}`}
+          className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium"
+        >
           Mark
         </Link>
       </div>
@@ -78,19 +104,33 @@ export default async function AttendancePage({ searchParams }) {
           <div className="flex gap-3">
             <div className="flex-1">
               <label className="block text-xs text-gray-500 mb-1">Date</label>
-              <input type="date" name="date" defaultValue={selectedDate}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+              <input
+                type="date"
+                name="date"
+                defaultValue={selectedDate}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
             </div>
             <div className="flex-1">
               <label className="block text-xs text-gray-500 mb-1">Class</label>
-              <select name="class" defaultValue={selectedClass}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <select
+                name="class"
+                defaultValue={selectedClass}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
                 <option value="">All Classes</option>
-                {classes.map((c) => <option key={c} value={c}>Class {c}</option>)}
+                {classes.map((c) => (
+                  <option key={c} value={c}>
+                    Class {c}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
-          <button type="submit" className="w-full bg-gray-800 text-white py-2 rounded-lg text-sm font-medium">
+          <button
+            type="submit"
+            className="w-full bg-gray-800 text-white py-2 rounded-lg text-sm font-medium"
+          >
             Show
           </button>
         </form>
@@ -113,9 +153,14 @@ export default async function AttendancePage({ searchParams }) {
 
       <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden mb-5">
         <div className="bg-gray-50 px-4 py-3 border-b border-gray-100 flex justify-between items-center">
-          <h2 className="text-sm font-semibold text-gray-700">Class-wise — {selectedDate}</h2>
+          <h2 className="text-sm font-semibold text-gray-700">
+            Class-wise — {selectedDate}
+          </h2>
           {selectedClass && (
-            <a href={`/attendance?date=${selectedDate}`} className="text-xs text-indigo-500 font-medium">
+            <a
+              href={`/attendance?date=${selectedDate}`}
+              className="text-xs text-indigo-500 font-medium"
+            >
               Show All
             </a>
           )}
@@ -124,26 +169,44 @@ export default async function AttendancePage({ searchParams }) {
           {classWiseSummary.map(({ cls, total, present, absent, unmarked }) => {
             const pct = total > 0 ? ((present / total) * 100).toFixed(0) : 0;
             return (
-              <div key={cls} className={`px-4 py-3 ${cls === selectedClass ? "bg-indigo-50" : ""}`}>
+              <div
+                key={cls}
+                className={`px-4 py-3 ${cls === selectedClass ? "bg-indigo-50" : ""}`}
+              >
                 <div className="flex justify-between items-center mb-1.5">
-                  <a href={`/attendance?date=${selectedDate}&class=${cls}`}
-                    className="text-sm font-semibold text-indigo-700 hover:underline">
+                  <a
+                    href={`/attendance?date=${selectedDate}&class=${cls}`}
+                    className="text-sm font-semibold text-indigo-700 hover:underline"
+                  >
                     Class {cls}
                   </a>
                   <div className="flex gap-3 items-center">
-                    <span className="text-xs font-bold text-gray-700">{pct}%</span>
-                    <a href={`/attendance/mark?date=${selectedDate}&class=${cls}`}
-                      className="text-xs text-indigo-500 font-medium">Mark →</a>
+                    <span className="text-xs font-bold text-gray-700">
+                      {pct}%
+                    </span>
+                    <a
+                      href={`/attendance/mark?date=${selectedDate}&class=${cls}`}
+                      className="text-xs text-indigo-500 font-medium"
+                    >
+                      Mark →
+                    </a>
                   </div>
                 </div>
                 <div className="w-full bg-gray-100 rounded-full h-1.5 mb-1.5">
-                  <div className="bg-green-500 h-1.5 rounded-full" style={{ width: `${pct}%` }} />
+                  <div
+                    className="bg-green-500 h-1.5 rounded-full"
+                    style={{ width: `${pct}%` }}
+                  />
                 </div>
                 <div className="flex gap-4 text-xs">
                   <span className="text-gray-500">Total: {total}</span>
                   <span className="text-green-600">Present: {present}</span>
                   <span className="text-red-500">Absent: {absent}</span>
-                  {unmarked > 0 && <span className="text-yellow-500">Unmarked: {unmarked}</span>}
+                  {unmarked > 0 && (
+                    <span className="text-yellow-500">
+                      Unmarked: {unmarked}
+                    </span>
+                  )}
                 </div>
               </div>
             );
@@ -158,19 +221,30 @@ export default async function AttendancePage({ searchParams }) {
           </p>
           <div className="space-y-2">
             {absentWithPhone.map((s) => {
-              const phone = s.parent_phone.replace(/\D/g, "");
+              const phone = s.phone.replace(/\D/g, "");
               const fullPhone = phone.startsWith("91") ? phone : `91${phone}`;
               const msg = encodeURIComponent(
-                `Dear ${s.parent_name || "Parent"},\n\n${s.name} (Class ${s.class}${s.section ? " " + s.section : ""}) is absent today (${selectedDate}). Please inform the school.\n\n— School Management`
+                `Dear ${s.father_name || "Parent"},\n\n${s.name} (Class ${s.class}${s.section ? " " + s.section : ""}) is absent today (${selectedDate}). Please inform the school.\n\n— School Management`,
               );
               return (
-                <div key={s.id} className="flex justify-between items-center bg-white rounded-lg px-3 py-2 border border-green-100">
+                <div
+                  key={s.id}
+                  className="flex justify-between items-center bg-white rounded-lg px-3 py-2 border border-green-100"
+                >
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{s.name}</p>
-                    <p className="text-xs text-gray-500">{s.parent_name || "—"} · {s.parent_phone}</p>
+                    <p className="text-sm font-medium text-gray-900">
+                      {s.name}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {s.father_name || "—"} · {s.phone}
+                    </p>
                   </div>
-                  <a href={`https://wa.me/${fullPhone}?text=${msg}`} target="_blank" rel="noopener noreferrer"
-                    className="bg-green-600 text-white text-xs px-3 py-1.5 rounded-lg font-medium">
+                  <a
+                    href={`https://wa.me/${fullPhone}?text=${msg}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-green-600 text-white text-xs px-3 py-1.5 rounded-lg font-medium"
+                  >
                     WhatsApp
                   </a>
                 </div>
@@ -183,45 +257,77 @@ export default async function AttendancePage({ searchParams }) {
       <div className="space-y-4">
         {sortedKeys.map((key) => {
           const { cls, sec, students: secStudents } = grouped[key];
-          const secPresent = secStudents.filter((s) => attendanceMap[s.id] === "present").length;
-          const secAbsent = secStudents.filter((s) => attendanceMap[s.id] === "absent").length;
-          const secUnmarked = secStudents.filter((s) => !attendanceMap[s.id]).length;
+          const secPresent = secStudents.filter(
+            (s) => attendanceMap[s.id] === "present",
+          ).length;
+          const secAbsent = secStudents.filter(
+            (s) => attendanceMap[s.id] === "absent",
+          ).length;
+          const secUnmarked = secStudents.filter(
+            (s) => !attendanceMap[s.id],
+          ).length;
           return (
-            <div key={key} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+            <div
+              key={key}
+              className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden"
+            >
               <div className="bg-indigo-50 px-4 py-2 flex justify-between items-center border-b border-indigo-100">
                 <div className="flex items-center gap-2">
-                  <span className="text-indigo-800 font-bold text-sm">Class {cls}</span>
+                  <span className="text-indigo-800 font-bold text-sm">
+                    Class {cls}
+                  </span>
                   {sec !== "—" && (
-                    <span className="bg-indigo-600 text-white text-xs px-2 py-0.5 rounded-full">Sec {sec}</span>
+                    <span className="bg-indigo-600 text-white text-xs px-2 py-0.5 rounded-full">
+                      Sec {sec}
+                    </span>
                   )}
-                  <span className="text-xs text-gray-500">· {secStudents.length} students</span>
+                  <span className="text-xs text-gray-500">
+                    · {secStudents.length} students
+                  </span>
                 </div>
                 <div className="flex gap-3 text-xs font-medium">
                   <span className="text-green-600">P:{secPresent}</span>
                   <span className="text-red-500">A:{secAbsent}</span>
-                  {secUnmarked > 0 && <span className="text-yellow-500">?:{secUnmarked}</span>}
+                  {secUnmarked > 0 && (
+                    <span className="text-yellow-500">?:{secUnmarked}</span>
+                  )}
                 </div>
               </div>
               <div className="divide-y divide-gray-50">
                 {[...secStudents]
                   .sort((a, b) => {
-                    const ra = parseInt(a.roll_number), rb = parseInt(b.roll_number);
+                    const ra = parseInt(a.roll_number),
+                      rb = parseInt(b.roll_number);
                     if (!isNaN(ra) && !isNaN(rb)) return ra - rb;
                     return (a.name || "").localeCompare(b.name || "");
                   })
                   .map((student) => (
-                    <div key={student.id} className="px-4 py-2.5 flex justify-between items-center">
+                    <div
+                      key={student.id}
+                      className="px-4 py-2.5 flex justify-between items-center"
+                    >
                       <div>
-                        <p className="font-medium text-gray-900 text-sm">{student.name}</p>
-                        <p className="text-gray-400 text-xs">Roll {student.roll_number || "—"}</p>
+                        <p className="font-medium text-gray-900 text-sm">
+                          {student.name}
+                        </p>
+                        <p className="text-gray-400 text-xs">
+                          Roll {student.roll_number || "—"}
+                        </p>
                       </div>
-                      <span className={`px-2 py-1 text-xs rounded-full font-medium ${
-                        attendanceMap[student.id] === "present" ? "bg-green-100 text-green-700" :
-                        attendanceMap[student.id] === "absent" ? "bg-red-100 text-red-700" :
-                        "bg-gray-100 text-gray-400"
-                      }`}>
-                        {attendanceMap[student.id] === "present" ? "✓ Present" :
-                         attendanceMap[student.id] === "absent" ? "✗ Absent" : "—"}
+                      <span
+                        className={`px-2 py-1 text-xs rounded-full font-medium ${
+                          attendanceMap[student.id] === "present"
+                            ? "bg-green-100 text-green-700"
+                            : attendanceMap[student.id] === "absent"
+                              ? "bg-red-100 text-red-700"
+                              : "bg-gray-100 text-gray-400"
+                        }`}
+                      >
+                        {attendanceMap[student.id] === "present"
+                          ? "✓ Present"
+                          : attendanceMap[student.id] === "absent"
+                            ? "✗ Absent"
+                            : "—"}
                       </span>
                     </div>
                   ))}
