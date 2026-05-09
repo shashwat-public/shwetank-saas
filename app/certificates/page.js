@@ -26,9 +26,22 @@ export default async function CertificatesPage({ searchParams }) {
   const filterType = params?.type || "";
   const filterClass = params?.class || "";
 
-  const allStudents = await db.select().from(students).orderBy(students.name);
-  const classes = [...new Set(allStudents.map((s) => s.class))].sort();
-
+  const classes = [
+    "Nursery",
+    "KG",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12",
+  ];
   const allCerts = await db
     .select({
       id: certificates.id,
