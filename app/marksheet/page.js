@@ -3,7 +3,7 @@
 export const dynamic = "force-dynamic";
 
 import { db } from "@/lib/db";
-import { exams, students } from "@/lib/schema";
+import { exams } from "@/lib/schema";
 
 export default async function MarksheetPage({ searchParams }) {
   const params = await searchParams;
@@ -11,12 +11,28 @@ export default async function MarksheetPage({ searchParams }) {
   const selectedType = params?.type || "";
   const selectedYear = params?.year || "";
 
-  const allStudents = await db.select().from(students);
   const allExams = await db.select().from(exams);
-
-  const classes = [...new Set(allStudents.map((s) => s.class))].sort();
-  const years = [...new Set(allExams.map((e) => e.academic_year).filter(Boolean))].sort().reverse();
-
+  const classes = [
+    "Nursery",
+    "KG",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12",
+  ];
+  const years = [
+    ...new Set(allExams.map((e) => e.academic_year).filter(Boolean)),
+  ]
+    .sort()
+    .reverse();
   const examTypes = [
     { val: "quarterly", label: "Quarterly" },
     { val: "half_yearly", label: "Half Yearly" },
@@ -48,7 +64,9 @@ export default async function MarksheetPage({ searchParams }) {
             >
               <option value="">Select Class</option>
               {classes.map((c) => (
-                <option key={c} value={c}>Class {c}</option>
+                <option key={c} value={c}>
+                  Class {c}
+                </option>
               ))}
             </select>
           </div>
@@ -90,7 +108,9 @@ export default async function MarksheetPage({ searchParams }) {
               >
                 <option value="">All Years</option>
                 {years.map((y) => (
-                  <option key={y} value={y}>{y}</option>
+                  <option key={y} value={y}>
+                    {y}
+                  </option>
                 ))}
               </select>
             ) : (
