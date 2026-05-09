@@ -13,22 +13,22 @@ export default async function ExpiredPage() {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 max-w-sm w-full text-center">
         <div className="text-5xl mb-4">⏰</div>
-        <h1 className="text-xl font-bold text-gray-900 mb-2">Subscription समाप्त</h1>
+        <h1 className="text-xl font-bold text-gray-900 mb-2">Subscription Expired</h1>
         <p className="text-sm text-gray-500 mb-6">
-          आपका निशांत स्कूल सॉफ्टवेयर का subscription समाप्त हो गया है।
-          सेवा जारी रखने के लिए नवीनीकरण करें।
+          your Nishant School Software  subscription Expired हो गया है।
+          service active रखने के लिए Renewal ।
         </p>
         <a
           href={paymentUrl}
           className="block w-full bg-indigo-600 text-white text-sm font-semibold py-3 rounded-xl hover:bg-indigo-700 transition mb-3"
         >
-          🔄 अभी नवीनीकरण करें
+          🔄 now Renewal 
         </a>
         <a
           href="https://wa.me/919996865069"
           className="block w-full bg-green-50 text-green-700 text-sm font-semibold py-3 rounded-xl hover:bg-green-100 transition"
         >
-          📞 WhatsApp पर संपर्क करें
+          📞 WhatsApp  सं्क 
         </a>
         <p className="text-xs text-gray-400 mt-4">9996865069</p>
       </div>

@@ -101,7 +101,7 @@ export default async function DashboardPage() {
       ) : null}
       <div className="flex justify-between items-center mb-5">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">डैशबोर्ड</h1>
+          <h1 className="text-xl font-bold text-gray-900">Dashboard</h1>
           <p className="text-gray-500 text-xs mt-0.5">
             {new Date().toLocaleDateString("en-IN", {
               weekday: "long",
@@ -126,14 +126,14 @@ export default async function DashboardPage() {
           className="block bg-yellow-50 border border-yellow-300 rounded-xl px-4 py-3 mb-5"
         >
           <p className="text-sm font-semibold text-yellow-800">
-            ⚠️ School Settings अधूरी हैं
+            ⚠️ School Settings Incomplete
           </p>
           <p className="text-xs text-yellow-700 mt-0.5">
-            School का नाम और Principal का नाम भरें — वरना receipts और
-            certificates पर जानकारी नहीं आएगी।
+            Fill in school name and Principal name — otherwise receipts and
+            certificates will be blank.
           </p>
           <p className="text-xs text-yellow-600 font-medium mt-1">
-            Settings भरें →
+            Go to Settings →
           </p>
         </Link>
       )}
@@ -147,10 +147,10 @@ export default async function DashboardPage() {
             className="block bg-indigo-50 border border-indigo-200 rounded-xl px-4 py-3 mb-5"
           >
             <p className="text-sm font-semibold text-indigo-800">
-              📋 आज की हाजिरी अभी नहीं ली गई
+              📋 Attendance not marked yet for today
             </p>
             <p className="text-xs text-indigo-600 font-medium mt-0.5">
-              अभी Mark करें →
+              Mark Now →
             </p>
           </Link>
         )}
@@ -161,14 +161,14 @@ export default async function DashboardPage() {
           <div className="text-2xl font-bold text-gray-900">
             {studentCount?.count || 0}
           </div>
-          <div className="text-xs text-gray-500 mt-0.5">कुल छात्र</div>
+          <div className="text-xs text-gray-500 mt-0.5">Total Students</div>
         </div>
         <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
           <div className="text-2xl mb-1">👨‍🏫</div>
           <div className="text-2xl font-bold text-gray-900">
             {teacherCount?.count || 0}
           </div>
-          <div className="text-xs text-gray-500 mt-0.5">कुल शिक्षक</div>
+          <div className="text-xs text-gray-500 mt-0.5">Total Teachers</div>
         </div>
         <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
           <div className="text-2xl mb-1">⚠️</div>
@@ -176,7 +176,7 @@ export default async function DashboardPage() {
             ₹{pendingFees?.total || 0}
           </div>
           <div className="text-xs text-gray-500 mt-0.5">
-            बकाया फीस ({pendingFees?.count || 0})
+            Pending Fees ({pendingFees?.count || 0})
           </div>
         </div>
         <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
@@ -184,7 +184,7 @@ export default async function DashboardPage() {
           <div className="text-2xl font-bold text-green-600">
             ₹{paidFees?.total || 0}
           </div>
-          <div className="text-xs text-gray-500 mt-0.5">फीस जमा</div>
+          <div className="text-xs text-gray-500 mt-0.5">Fees Collected</div>
         </div>
       </div>
 
@@ -194,35 +194,35 @@ export default async function DashboardPage() {
           <div className="text-2xl font-bold text-green-600">
             {todayPresent?.count || 0}
           </div>
-          <div className="text-xs text-gray-500 mt-0.5">आज उपस्थित</div>
+          <div className="text-xs text-gray-500 mt-0.5">Present Today</div>
         </div>
         <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
           <div className="text-2xl mb-1">🔴</div>
           <div className="text-2xl font-bold text-red-500">
             {todayAbsent?.count || 0}
           </div>
-          <div className="text-xs text-gray-500 mt-0.5">आज अनुपस्थित</div>
+          <div className="text-xs text-gray-500 mt-0.5">Absent Today</div>
         </div>
         <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
           <div className="text-2xl mb-1">📝</div>
           <div className="text-2xl font-bold text-gray-900">
             {examCount?.count || 0}
           </div>
-          <div className="text-xs text-gray-500 mt-0.5">कुल परीक्षाएं</div>
+          <div className="text-xs text-gray-500 mt-0.5">Total Exams</div>
         </div>
         <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
           <div className="text-2xl mb-1">📋</div>
           <div className="text-2xl font-bold text-gray-900">
             {noticeCount?.count || 0}
           </div>
-          <div className="text-xs text-gray-500 mt-0.5">सूचनाएं</div>
+          <div className="text-xs text-gray-500 mt-0.5">Notices</div>
         </div>
       </div>
 
       <div className="space-y-4">
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
           <h2 className="font-semibold text-gray-900 text-sm mb-3">
-            त्वरित कार्य
+            Quick Actions
           </h2>
           <div className="grid grid-cols-2 gap-2">
             {[
@@ -249,10 +249,10 @@ export default async function DashboardPage() {
 
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
           <h2 className="font-semibold text-gray-900 text-sm mb-3">
-            आगामी परीक्षाएं
+            Upcoming Exams
           </h2>
           {upcomingExams.length === 0 ? (
-            <p className="text-xs text-gray-400">कोई upcoming exam नहीं।</p>
+            <p className="text-xs text-gray-400">No upcoming exams.</p>
           ) : (
             <div className="space-y-3">
               {upcomingExams.map((exam) => (
@@ -279,10 +279,10 @@ export default async function DashboardPage() {
 
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
           <h2 className="font-semibold text-gray-900 text-sm mb-3">
-            हाल की सूचनाएं
+            Recent Notices
           </h2>
           {recentNotices.length === 0 ? (
-            <p className="text-xs text-gray-400">कोई notice नहीं।</p>
+            <p className="text-xs text-gray-400">No notices yet.</p>
           ) : (
             <div className="space-y-3">
               {recentNotices.map((notice) => (

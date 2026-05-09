@@ -23,7 +23,7 @@ export default async function IssueCertificatePage({ searchParams }) {
         <p className="text-gray-500 text-xs mt-0.5">TC · Character · Bonafide · Birth</p>
       </div>
 
-      {/* Class Filter — अलग GET form */}
+      {/* Class Filter — separate GET form */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-4">
         <form method="GET" action="/certificates/issue" className="flex gap-3">
           <select name="class" defaultValue={selectedClass}

@@ -28,7 +28,7 @@ export default async function AssignTransportPage() {
     <div>
       <div className="mb-4">
         <h1 className="text-xl font-bold text-gray-900">Assign Transport</h1>
-        <p className="text-gray-500 text-xs mt-0.5">Student को route assign करें</p>
+        <p className="text-gray-500 text-xs mt-0.5">Student  route assign </p>
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
@@ -61,9 +61,9 @@ export default async function AssignTransportPage() {
             </label>
             {allRoutes.length === 0 ? (
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-2.5 text-sm text-yellow-700">
-                कोई route नहीं है।{" "}
+                no route  है।{" "}
                 <a href="/transport/add" className="font-medium underline">
-                  पहले route add करें
+                  first route add 
                 </a>
               </div>
             ) : (

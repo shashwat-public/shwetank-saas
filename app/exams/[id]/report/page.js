@@ -89,7 +89,7 @@ export default async function ReportCardPage({ params }) {
             />
           )}
           <h2 className="text-2xl font-bold text-gray-900">
-            {settings.school_name || "निशांत स्कूल"}
+            {settings.school_name || "Nishant School"}
           </h2>
           {settings.address && (
             <p className="text-gray-400 text-xs mt-1">{settings.address}</p>
@@ -249,7 +249,7 @@ export default async function ReportCardPage({ params }) {
         </table>
 
         <div className="mt-8 pt-6 border-t border-gray-200 flex justify-between text-xs text-gray-400 print:mt-16">
-          <span>निशांत स्कूल सॉफ्टवेयर</span>
+          <span>Nishant School Software</span>
           <span>{new Date().toLocaleDateString("en-IN")}</span>
           <span>Class Teacher Signature: _______________</span>
         </div>

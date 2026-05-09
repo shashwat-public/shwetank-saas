@@ -89,7 +89,7 @@ export default async function FeeReceiptPage({ params }) {
             />
           )}
           <h2 className="text-2xl font-bold text-indigo-700">
-            {settings.school_name || "निशांत स्कूल"}
+            {settings.school_name || "Nishant School"}
           </h2>
           {settings.address && (
             <p className="text-gray-400 text-xs mt-1">{settings.address}</p>
@@ -183,7 +183,7 @@ export default async function FeeReceiptPage({ params }) {
 
         {/* Footer */}
         <div className="border-t border-gray-200 pt-6 flex justify-between text-xs text-gray-400 print:mt-8">
-          <span>निशांत स्कूल सॉफ्टवेयर</span>
+          <span>Nishant School Software</span>
           <span>Authorised Signature: _______________</span>
         </div>
       </div>

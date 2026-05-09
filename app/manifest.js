@@ -1,9 +1,9 @@
 export default function manifest() {
   return {
     id: "/dashboard",
-    name: "निशांत स्कूल सॉफ्टवेयर",
-    short_name: "स्कूल",
-    description: "विद्यालय प्रबंधन सॉफ्टवेयर",
+    name: "Nishant School Software",
+    short_name: "School",
+    description: "School Management Software",
     start_url: "/dashboard",
     display: "standalone",
     background_color: "#312e81",

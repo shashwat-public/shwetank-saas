@@ -193,7 +193,7 @@ export default async function TransportReceiptPage({ searchParams }) {
 
         {/* Footer */}
         <div className="border-t border-gray-200 pt-6 flex justify-between text-xs text-gray-400 print:mt-8">
-          <span>निशांत स्कूल सॉफ्टवेयर</span>
+          <span>Nishant School Software</span>
           <span>Authorised Signature: _______________</span>
         </div>
       </div>

@@ -29,7 +29,7 @@ export default async function TeacherAttendancePage({ searchParams }) {
   const selectedDate = params?.date || today;
   const selectedClass = params?.class || "";
 
-  // Teacher की assigned classes
+  // Teacher  assigned classes
   const assignedSubjects = await db
     .select()
     .from(teacher_subjects)

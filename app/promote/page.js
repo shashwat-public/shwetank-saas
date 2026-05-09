@@ -58,13 +58,13 @@ export default async function PromotePage() {
       <div className="mb-4">
         <h1 className="text-xl font-bold text-gray-900">Student Promotion</h1>
         <p className="text-gray-500 text-xs mt-0.5">
-          Class-wise bulk promotion — नया academic year
+          Class-wise bulk promotion — new academic year
         </p>
       </div>
 
       <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-3 mb-4 text-xs text-yellow-800">
-        ⚠️ यह action सभी selected class के students को अगली class में move कर
-        देगा। एक बार हो जाने के बाद undo नहीं होगा।
+        ⚠️  action स selected class के students  अगली class में move कर
+         एक बार हो जाने के बाद undo  होगा।
       </div>
 
       <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 mb-4">
@@ -118,7 +118,7 @@ export default async function PromotePage() {
               required
               className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
-              <option value="">Promote करके किस class में जाएंगे...</option>
+              <option value="">Promote  किस class में जागे...</option>
               {allClassOptions.map((c) => (
                 <option key={c} value={c}>
                   {c}
