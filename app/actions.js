@@ -301,7 +301,14 @@ export async function addPayment(formData) {
 // ─── Attendance ───────────────────────────────────────────────────────────────
 
 export async function saveAttendance(formData) {
-  await getAuth();
+  const cookieStore = await cookies();
+  const adminToken = cookieStore.get("session")?.value;
+  const teacherToken = cookieStore.get("teacher_session")?.value;
+  if (!adminToken && !teacherToken) redirect("/login");
+  if (adminToken) {
+    const session = await getSession(adminToken);
+    if (!session) redirect("/login");
+  }
 
   const date = formData.get("date");
   const studentIds = formData.getAll("student_id");
@@ -339,8 +346,6 @@ export async function saveAttendance(formData) {
   await setFlash("success", "Attendance saved!");
   redirect("/attendance");
 }
-
-// ─── Exams ────────────────────────────────────────────────────────────────────
 
 export async function createExam(formData) {
   await getAuth();
