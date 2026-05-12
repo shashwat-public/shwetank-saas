@@ -40,22 +40,24 @@ export default async function FeesPage({ searchParams }) {
     .where(eq(students.user_id, user.id))
     .orderBy(fees.due_date);
 
-  const stats = await db
-    .select({
-      pending_count: sql`COUNT(CASE WHEN ${fees.status} = 'pending' THEN 1 END)`,
-      partial_count: sql`COUNT(CASE WHEN ${fees.status} = 'partial' THEN 1 END)`,
-      paid_count: sql`COUNT(CASE WHEN ${fees.status} = 'paid' THEN 1 END)`,
-      overdue_count: sql`COUNT(CASE WHEN ${fees.status} = 'overdue' THEN 1 END)`,
-      total_pending: sql`SUM(CASE WHEN ${fees.status} = 'pending' THEN ${fees.amount} ELSE 0 END)`,
-      total_partial: sql`SUM(CASE WHEN ${fees.status} = 'partial' THEN (${fees.amount} - ${fees.paid_amount}) ELSE 0 END)`,
-      total_collected: sql`SUM(CASE WHEN ${fees.status} = 'paid' THEN ${fees.amount} ELSE 0 END)`,
-      total_overdue: sql`SUM(CASE WHEN ${fees.status} = 'overdue' THEN ${fees.amount} ELSE 0 END)`,
-    })
-    .leftJoin(students, eq(fees.student_id, students.id))
-    .where(eq(students.user_id, user.id))
-    .from(fees);
-
-  const summary = stats[0] || {};
+  const summary = {
+    pending_count: allFees.filter((f) => f.status === "pending").length,
+    partial_count: allFees.filter((f) => f.status === "partial").length,
+    paid_count: allFees.filter((f) => f.status === "paid").length,
+    overdue_count: allFees.filter((f) => f.status === "overdue").length,
+    total_pending: allFees
+      .filter((f) => f.status === "pending")
+      .reduce((s, f) => s + (f.amount || 0), 0),
+    total_partial: allFees
+      .filter((f) => f.status === "partial")
+      .reduce((s, f) => s + ((f.amount || 0) - (f.paid_amount || 0)), 0),
+    total_collected: allFees
+      .filter((f) => f.status === "paid")
+      .reduce((s, f) => s + (f.amount || 0), 0),
+    total_overdue: allFees
+      .filter((f) => f.status === "overdue")
+      .reduce((s, f) => s + (f.amount || 0), 0),
+  };
 
   const grouped = {};
   allFees.forEach((fee) => {
