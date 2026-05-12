@@ -39,22 +39,20 @@ export default function StudentLoginPage() {
         )}
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Roll Number
             </label>
             <input
               type="text"
               required
               value={form.roll_number}
-              onChange={(e) =>
-                setForm({ ...form, roll_number: e.target.value })
-              }
+              onChange={(e) => setForm({ ...form, roll_number: e.target.value })}
               className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Password
+              Phone Number
             </label>
             <input
               type="tel"
