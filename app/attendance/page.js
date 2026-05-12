@@ -4,14 +4,30 @@ import { db } from "@/lib/db";
 import { students, attendance } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import Link from "next/link";
+import { cookies } from "next/headers";
+import { getSession } from "@/lib/session";
+import { redirect } from "next/navigation";
+import { users } from "@/lib/schema";
+import { and } from "drizzle-orm";
 
 export default async function AttendancePage({ searchParams }) {
+  const cookieStore = await cookies();
+  const session = await getSession(cookieStore.get("session")?.value);
+  if (!session) redirect("/login");
+  const userResult = await db
+    .select()
+    .from(users)
+    .where(eq(users.email, session.email));
+  const user = userResult[0];
   const params = await searchParams;
   const today = new Date().toISOString().split("T")[0];
   const selectedDate = params?.date || today;
   const selectedClass = params?.class || "";
 
-  const allStudents = await db.select().from(students);
+  const allStudents = await db
+    .select()
+    .from(students)
+    .where(eq(students.user_id, user.id));
 
   const classes = [
     "Nursery",
@@ -38,7 +54,10 @@ export default async function AttendancePage({ searchParams }) {
   const todayAttendance = await db
     .select()
     .from(attendance)
-    .where(eq(attendance.date, selectedDate));
+    .leftJoin(students, eq(attendance.student_id, students.id))
+    .where(
+      and(eq(attendance.date, selectedDate), eq(students.user_id, user.id)),
+    );
   const attendanceMap = {};
   todayAttendance.forEach((a) => {
     attendanceMap[a.student_id] = a.status;

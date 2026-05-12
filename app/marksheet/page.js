@@ -4,14 +4,30 @@ export const dynamic = "force-dynamic";
 
 import { db } from "@/lib/db";
 import { exams } from "@/lib/schema";
+import { cookies } from "next/headers";
+import { getSession } from "@/lib/session";
+import { redirect } from "next/navigation";
+import { users } from "@/lib/schema";
+import { eq } from "drizzle-orm";
 
 export default async function MarksheetPage({ searchParams }) {
+  const cookieStore = await cookies();
+  const session = await getSession(cookieStore.get("session")?.value);
+  if (!session) redirect("/login");
+  const userResult = await db
+    .select()
+    .from(users)
+    .where(eq(users.email, session.email));
+  const user = userResult[0];
   const params = await searchParams;
   const selectedClass = params?.class || "";
   const selectedType = params?.type || "";
   const selectedYear = params?.year || "";
 
-  const allExams = await db.select().from(exams);
+  const allExams = await db
+    .select()
+    .from(exams)
+    .where(eq(exams.user_id, user.id));
   const classes = [
     "Nursery",
     "LKG",

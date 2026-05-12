@@ -3,7 +3,7 @@ export const dynamic = "force-dynamic";
 import PrintButton from "./PrintButton";
 import { db } from "@/lib/db";
 import { exams, students, results, school_settings, users } from "@/lib/schema";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { getSession } from "@/lib/session";
 import { notFound } from "next/navigation";
@@ -21,7 +21,7 @@ export default async function ReportCardPage({ params }) {
   const classStudents = await db
     .select()
     .from(students)
-    .where(eq(students.class, exam.class));
+    .where(and(eq(students.class, exam.class), eq(students.user_id, user.id)));
   const examResults = await db
     .select()
     .from(results)

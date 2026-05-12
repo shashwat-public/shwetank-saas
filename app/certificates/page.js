@@ -6,7 +6,19 @@ import { db } from "@/lib/db";
 import { certificates, students } from "@/lib/schema";
 import { eq, desc } from "drizzle-orm";
 import Link from "next/link";
+import { cookies } from "next/headers";
+import { getSession } from "@/lib/session";
+import { redirect } from "next/navigation";
+import { users } from "@/lib/schema";
 
+const cookieStore = await cookies();
+const session = await getSession(cookieStore.get("session")?.value);
+if (!session) redirect("/login");
+const userResult = await db
+  .select()
+  .from(users)
+  .where(eq(users.email, session.email));
+const user = userResult[0];
 const CERT_LABELS = {
   tc: "Transfer Certificate",
   character: "Character Certificate",
@@ -60,6 +72,7 @@ export default async function CertificatesPage({ searchParams }) {
     })
     .from(certificates)
     .leftJoin(students, eq(certificates.student_id, students.id))
+    .where(eq(students.user_id, user.id))
     .orderBy(desc(certificates.created_at));
 
   const filtered = allCerts.filter((c) => {

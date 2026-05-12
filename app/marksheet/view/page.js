@@ -36,9 +36,10 @@ export default async function MarksheetViewPage({ searchParams }) {
   const classStudents = await db
     .select()
     .from(students)
-    .where(eq(students.class, selectedClass))
+    .where(
+      and(eq(students.class, selectedClass), eq(students.user_id, user.id)),
+    )
     .orderBy(students.roll_number, students.name);
-
   if (classStudents.length === 0) {
     return (
       <div>
@@ -68,6 +69,7 @@ export default async function MarksheetViewPage({ searchParams }) {
   const conditions = [
     eq(exams.class, selectedClass),
     eq(exams.exam_type, selectedType),
+    eq(exams.user_id, user.id),
   ];
   if (selectedYear) conditions.push(eq(exams.academic_year, selectedYear));
 

@@ -7,6 +7,9 @@ import { certificates, students, school_settings } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import PrintButton from "./PrintButton";
+import { cookies } from "next/headers";
+import { getSession } from "@/lib/session";
+import { users } from "@/lib/schema";
 
 const CERT_TITLES = {
   tc: "TRANSFER CERTIFICATE",
@@ -16,6 +19,14 @@ const CERT_TITLES = {
 };
 
 export default async function CertificatePrintPage({ params }) {
+  const cookieStore = await cookies();
+  const session = await getSession(cookieStore.get("session")?.value);
+  if (!session) redirect("/login");
+  const userResult = await db
+    .select()
+    .from(users)
+    .where(eq(users.email, session.email));
+  const user = userResult[0];
   const { id } = await params;
 
   const rows = await db
@@ -50,7 +61,10 @@ export default async function CertificatePrintPage({ params }) {
   if (rows.length === 0) notFound();
   const c = rows[0];
 
-  const settingsRows = await db.select().from(school_settings).limit(1);
+  const settingsRows = await db
+    .select()
+    .from(school_settings)
+    .where(eq(school_settings.user_id, user.id));
   const school = settingsRows[0] || {};
 
   const title = CERT_TITLES[c.cert_type] || "CERTIFICATE";
@@ -125,11 +139,14 @@ export default async function CertificatePrintPage({ params }) {
             {c.gender === "Male"
               ? ", son of "
               : c.gender === "Female"
-              ? ", daughter of "
-              : ", child of "}
+                ? ", daughter of "
+                : ", child of "}
             <strong>{c.father_name || "_______________"}</strong>
             {c.mother_name ? (
-              <> and <strong>{c.mother_name}</strong></>
+              <>
+                {" "}
+                and <strong>{c.mother_name}</strong>
+              </>
             ) : null}
             , is/was a student of this school.
           </p>
@@ -223,7 +240,9 @@ export default async function CertificatePrintPage({ params }) {
           <div className="text-center">
             <div className="border-t border-gray-400 w-36 mb-1" />
             <p className="text-xs text-gray-500">
-              {school.principal_name ? school.principal_name : "Principal / Head"}
+              {school.principal_name
+                ? school.principal_name
+                : "Principal / Head"}
             </p>
           </div>
         </div>

@@ -7,8 +7,19 @@ import { redirect } from "next/navigation";
 import { notFound } from "next/navigation";
 import { setFlash } from "@/lib/flash";
 import { saveResults } from "@/app/actions";
+import { cookies } from "next/headers";
+import { getSession } from "@/lib/session";
+import { users } from "@/lib/schema";
 
 export default async function MarksEntryPage({ params }) {
+  const cookieStore = await cookies();
+  const session = await getSession(cookieStore.get("session")?.value);
+  if (!session) redirect("/login");
+  const userResult = await db
+    .select()
+    .from(users)
+    .where(eq(users.email, session.email));
+  const user = userResult[0];
   const { id } = await params;
 
   const examResult = await db
@@ -21,7 +32,7 @@ export default async function MarksEntryPage({ params }) {
   const classStudents = await db
     .select()
     .from(students)
-    .where(eq(students.class, exam.class));
+    .where(and(eq(students.class, exam.class), eq(students.user_id, user.id)));
 
   const existingResults = await db
     .select()

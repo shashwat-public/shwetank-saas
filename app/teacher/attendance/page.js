@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { jwtVerify } from "jose";
 import { redirect } from "next/navigation";
+import { teachers } from "@/lib/schema";
 import AttendanceForm from "@/app/attendance/mark/AttendanceForm";
 
 const SECRET = new TextEncoder().encode(process.env.SESSION_SECRET);
@@ -24,6 +25,11 @@ export default async function TeacherAttendancePage({ searchParams }) {
   }
 
   const teacherId = payload.teacherId;
+  const teacherRow = await db
+    .select()
+    .from(teachers)
+    .where(eq(teachers.id, teacherId));
+  const teacher = teacherRow[0];
   const params = await searchParams;
   const today = new Date().toISOString().split("T")[0];
   const selectedDate = params?.date || today;
@@ -48,10 +54,14 @@ export default async function TeacherAttendancePage({ searchParams }) {
     );
   }
 
-  const allStudents = await db.select().from(students);
-  const filteredStudents = allStudents.filter((s) =>
-    assignedClasses.includes(s.class) &&
-    (!selectedClass || s.class === selectedClass)
+  const allStudents = await db
+    .select()
+    .from(students)
+    .where(eq(students.user_id, teacher.user_id));
+  const filteredStudents = allStudents.filter(
+    (s) =>
+      assignedClasses.includes(s.class) &&
+      (!selectedClass || s.class === selectedClass),
   );
 
   const existing = await db
@@ -59,7 +69,9 @@ export default async function TeacherAttendancePage({ searchParams }) {
     .from(attendance)
     .where(eq(attendance.date, selectedDate));
   const attendanceMap = {};
-  existing.forEach((a) => { attendanceMap[a.student_id] = a.status; });
+  existing.forEach((a) => {
+    attendanceMap[a.student_id] = a.status;
+  });
 
   const alreadyMarked = existing.length > 0;
 
@@ -80,8 +92,12 @@ export default async function TeacherAttendancePage({ searchParams }) {
     return as_.localeCompare(bs);
   });
 
-  const presentCount = filteredStudents.filter((s) => attendanceMap[s.id] === "present").length;
-  const absentCount = filteredStudents.filter((s) => attendanceMap[s.id] === "absent").length;
+  const presentCount = filteredStudents.filter(
+    (s) => attendanceMap[s.id] === "present",
+  ).length;
+  const absentCount = filteredStudents.filter(
+    (s) => attendanceMap[s.id] === "absent",
+  ).length;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -90,7 +106,12 @@ export default async function TeacherAttendancePage({ searchParams }) {
           <p className="text-white font-bold">{payload.teacherName}</p>
           <p className="text-indigo-200 text-xs">Teacher Portal</p>
         </div>
-        <a href="/api/teacher-logout" className="text-red-300 text-sm font-medium">Logout</a>
+        <a
+          href="/api/teacher-logout"
+          className="text-red-300 text-sm font-medium"
+        >
+          Logout
+        </a>
       </div>
 
       <div className="p-4">
@@ -104,21 +125,35 @@ export default async function TeacherAttendancePage({ searchParams }) {
             <div className="flex gap-3">
               <div className="flex-1">
                 <label className="block text-xs text-gray-500 mb-1">Date</label>
-                <input type="date" name="date" defaultValue={selectedDate}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                <input
+                  type="date"
+                  name="date"
+                  defaultValue={selectedDate}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
               </div>
               <div className="flex-1">
-                <label className="block text-xs text-gray-500 mb-1">Class</label>
-                <select name="class" defaultValue={selectedClass}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <label className="block text-xs text-gray-500 mb-1">
+                  Class
+                </label>
+                <select
+                  name="class"
+                  defaultValue={selectedClass}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                >
                   <option value="">All My Classes</option>
                   {assignedClasses.map((c) => (
-                    <option key={c} value={c}>Class {c}</option>
+                    <option key={c} value={c}>
+                      Class {c}
+                    </option>
                   ))}
                 </select>
               </div>
             </div>
-            <button type="submit" className="w-full bg-gray-800 text-white py-2 rounded-lg text-sm font-medium">
+            <button
+              type="submit"
+              className="w-full bg-gray-800 text-white py-2 rounded-lg text-sm font-medium"
+            >
               Filter
             </button>
           </form>
@@ -127,7 +162,9 @@ export default async function TeacherAttendancePage({ searchParams }) {
         {alreadyMarked && (
           <div className="bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3 mb-4 text-xs text-yellow-800">
             ⚠️ Attendance already marked for this date.
-            <span className="ml-2 font-semibold">P: {presentCount} · A: {absentCount}</span>
+            <span className="ml-2 font-semibold">
+              P: {presentCount} · A: {absentCount}
+            </span>
           </div>
         )}
 
