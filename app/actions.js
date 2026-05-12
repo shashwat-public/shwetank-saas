@@ -756,7 +756,10 @@ export async function markFeePaid(formData) {
 
 export async function addFeeStructure(formData) {
   const session = await getAuth();
-  const userResult = await db.select().from(schema.users).where(eq(schema.users.email, session.email));
+  const userResult = await db
+    .select()
+    .from(schema.users)
+    .where(eq(schema.users.email, session.email));
   const user = userResult[0];
   if (!user) redirect("/login");
 
@@ -777,5 +780,15 @@ export async function addFeeStructure(formData) {
   });
 
   await setFlash("success", "Fee structure saved!");
+  redirect("/fee-structure");
+}
+
+export async function deleteFeeStructure(formData) {
+  await getAuth();
+  const id = parseInt(formData.get("id"));
+  await db
+    .delete(schema.fee_structures)
+    .where(eq(schema.fee_structures.id, id));
+  await setFlash("success", "Fee structure deleted!");
   redirect("/fee-structure");
 }

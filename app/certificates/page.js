@@ -11,14 +11,6 @@ import { getSession } from "@/lib/session";
 import { redirect } from "next/navigation";
 import { users } from "@/lib/schema";
 
-const cookieStore = await cookies();
-const session = await getSession(cookieStore.get("session")?.value);
-if (!session) redirect("/login");
-const userResult = await db
-  .select()
-  .from(users)
-  .where(eq(users.email, session.email));
-const user = userResult[0];
 const CERT_LABELS = {
   tc: "Transfer Certificate",
   character: "Character Certificate",
@@ -34,6 +26,14 @@ const CERT_COLORS = {
 };
 
 export default async function CertificatesPage({ searchParams }) {
+  const cookieStore = await cookies();
+  const session = await getSession(cookieStore.get("session")?.value);
+  if (!session) redirect("/login");
+  const userResult = await db
+    .select()
+    .from(users)
+    .where(eq(users.email, session.email));
+  const user = userResult[0];
   const params = await searchParams;
   const filterType = params?.type || "";
   const filterClass = params?.class || "";
