@@ -43,7 +43,12 @@ const studentSchema = z.object({
 });
 
 export async function addStudent(formData) {
-  await getAuth();
+  const session = await getAuth();
+  const userResult = await db
+    .select()
+    .from(schema.users)
+    .where(eq(schema.users.email, session.email));
+  const user = userResult[0];
 
   const raw = {
     name: formData.get("name"),
@@ -79,6 +84,7 @@ export async function addStudent(formData) {
       ? new Date(parsed.data.admission_date)
       : new Date(),
     fee_status: parsed.data.fee_status || "pending",
+    user_id: user.id,
   });
 
   await setFlash("success", "Student added successfully!");
@@ -124,7 +130,12 @@ export async function updateStudent(formData) {
 }
 
 export async function importStudents(formData) {
-  await getAuth();
+  const session = await getAuth();
+  const userResult = await db
+    .select()
+    .from(schema.users)
+    .where(eq(schema.users.email, session.email));
+  const user = userResult[0];
 
   const csvText = formData.get("csv_data");
   if (!csvText) {
@@ -158,6 +169,7 @@ export async function importStudents(formData) {
         roll_number: roll_number || null,
         phone: phone || null,
         fee_status: "pending",
+        user_id: user.id,
       });
       count++;
     } catch {
@@ -170,7 +182,12 @@ export async function importStudents(formData) {
 }
 
 export async function promoteStudents(formData) {
-  await getAuth();
+  const session = await getAuth();
+  const userResult = await db
+    .select()
+    .from(schema.users)
+    .where(eq(schema.users.email, session.email));
+  const user = userResult[0];
 
   const from_class = formData.get("from_class");
   const to_class = formData.get("to_class");
@@ -229,7 +246,12 @@ export async function saveParent(formData) {
 // ─── Teachers ─────────────────────────────────────────────────────────────────
 
 export async function addTeacher(formData) {
-  await getAuth();
+  const session = await getAuth();
+  const userResult = await db
+    .select()
+    .from(schema.users)
+    .where(eq(schema.users.email, session.email));
+  const user = userResult[0];
 
   await db.insert(schema.teachers).values({
     name: formData.get("name"),
@@ -237,6 +259,7 @@ export async function addTeacher(formData) {
     phone: formData.get("phone"),
     email: formData.get("email"),
     pin: formData.get("pin"),
+    user_id: user.id,
   });
 
   await setFlash("success", "Teacher added successfully!");
@@ -348,7 +371,12 @@ export async function saveAttendance(formData) {
 }
 
 export async function createExam(formData) {
-  await getAuth();
+  const session = await getAuth();
+  const userResult = await db
+    .select()
+    .from(schema.users)
+    .where(eq(schema.users.email, session.email));
+  const user = userResult[0];
 
   await db.insert(schema.exams).values({
     name: formData.get("name"),
@@ -357,6 +385,7 @@ export async function createExam(formData) {
     exam_date: formData.get("exam_date"),
     max_marks: parseInt(formData.get("max_marks")),
     passing_marks: parseInt(formData.get("passing_marks")),
+    user_id: user.id,
   });
 
   await setFlash("success", "Exam scheduled successfully!");
@@ -421,13 +450,19 @@ export async function saveResults(formData) {
 // ─── Notices ──────────────────────────────────────────────────────────────────
 
 export async function createNotice(formData) {
-  await getAuth();
+  const session = await getAuth();
+  const userResult = await db
+    .select()
+    .from(schema.users)
+    .where(eq(schema.users.email, session.email));
+  const user = userResult[0];
 
   await db.insert(schema.notices).values({
     title: formData.get("title"),
     content: formData.get("content"),
     category: formData.get("category"),
     priority: formData.get("priority"),
+    user_id: user.id,
   });
 
   await setFlash("success", "Notice posted successfully!");
@@ -437,7 +472,12 @@ export async function createNotice(formData) {
 // ─── Timetable ────────────────────────────────────────────────────────────────
 
 export async function addPeriod(formData) {
-  await getAuth();
+  const session = await getAuth();
+  const userResult = await db
+    .select()
+    .from(schema.users)
+    .where(eq(schema.users.email, session.email));
+  const user = userResult[0];
 
   const className = formData.get("class");
 
@@ -449,6 +489,7 @@ export async function addPeriod(formData) {
     teacher_name: formData.get("teacher_name"),
     start_time: formData.get("start_time"),
     end_time: formData.get("end_time"),
+    user_id: user.id,
   });
 
   await setFlash("success", "Period added successfully!");
@@ -458,7 +499,12 @@ export async function addPeriod(formData) {
 // ─── Transport ────────────────────────────────────────────────────────────────
 
 export async function addRoute(formData) {
-  await getAuth();
+  const session = await getAuth();
+  const userResult = await db
+    .select()
+    .from(schema.users)
+    .where(eq(schema.users.email, session.email));
+  const user = userResult[0];
 
   await db.insert(schema.transport).values({
     route_name: formData.get("route_name"),
@@ -466,6 +512,7 @@ export async function addRoute(formData) {
     monthly_fee: parseFloat(formData.get("monthly_fee")) || 0,
     driver_name: formData.get("driver_name") || null,
     vehicle_no: formData.get("vehicle_no") || null,
+    user_id: user.id,
   });
 
   await setFlash("success", "Route added successfully!");

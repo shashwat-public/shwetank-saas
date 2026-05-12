@@ -15,7 +15,7 @@ import {
   school_settings,
   users,
 } from "@/lib/schema";
-import { sql, eq } from "drizzle-orm";
+import { sql, eq, and } from "drizzle-orm";
 
 export default async function DashboardPage() {
   const cookieStore = await cookies();
@@ -23,13 +23,20 @@ export default async function DashboardPage() {
   if (!session) redirect("/login");
 
   const today = new Date().toISOString().split("T")[0];
+  const userResult = await db
+    .select()
+    .from(users)
+    .where(eq(users.email, session.email));
+  const user = userResult[0];
 
   const [studentCount] = await db
     .select({ count: sql`COUNT(*)` })
-    .from(students);
+    .from(students)
+    .where(eq(students.user_id, user.id));
   const [teacherCount] = await db
     .select({ count: sql`COUNT(*)` })
-    .from(teachers);
+    .from(teachers)
+    .where(eq(teachers.user_id, user.id));
   const [pendingFees] = await db
     .select({ total: sql`SUM(amount)`, count: sql`COUNT(*)` })
     .from(fees)
@@ -46,26 +53,28 @@ export default async function DashboardPage() {
     .select({ count: sql`COUNT(*)` })
     .from(attendance)
     .where(sql`date = ${today} AND status = 'absent'`);
-  const [examCount] = await db.select({ count: sql`COUNT(*)` }).from(exams);
-  const [noticeCount] = await db.select({ count: sql`COUNT(*)` }).from(notices);
+  const [examCount] = await db
+    .select({ count: sql`COUNT(*)` })
+    .from(exams)
+    .where(eq(exams.user_id, user.id));
+  const [noticeCount] = await db
+    .select({ count: sql`COUNT(*)` })
+    .from(notices)
+    .where(eq(notices.user_id, user.id));
 
   const recentNotices = await db
     .select()
     .from(notices)
+    .where(eq(notices.user_id, user.id))
     .orderBy(sql`created_at DESC`)
     .limit(3);
   const upcomingExams = await db
     .select()
     .from(exams)
-    .where(sql`exam_date >= ${today}`)
+    .where(and(sql`exam_date >= ${today}`, eq(exams.user_id, user.id)))
     .orderBy(sql`exam_date ASC`)
     .limit(3);
 
-  const userResult = await db
-    .select()
-    .from(users)
-    .where(eq(users.email, session.email));
-  const user = userResult[0];
   const settingsRows = user
     ? await db
         .select()

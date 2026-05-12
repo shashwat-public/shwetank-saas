@@ -5,8 +5,20 @@ import { db } from "@/lib/db";
 import { exams, results } from "@/lib/schema";
 import { eq, sql } from "drizzle-orm";
 import Link from "next/link";
+import { cookies } from "next/headers";
+import { getSession } from "@/lib/session";
+import { redirect } from "next/navigation";
+import { users } from "@/lib/schema";
 
 export default async function ExamsPage({ searchParams }) {
+  const cookieStore = await cookies();
+  const session = await getSession(cookieStore.get("session")?.value);
+  if (!session) redirect("/login");
+  const userResult = await db
+    .select()
+    .from(users)
+    .where(eq(users.email, session.email));
+  const user = userResult[0];
   const params = await searchParams;
   const filterClass = params?.class || "";
   const filterType = params?.type || "";
@@ -25,6 +37,7 @@ export default async function ExamsPage({ searchParams }) {
       result_count: sql`(SELECT COUNT(*) FROM results WHERE results.exam_id = ${exams.id})`,
     })
     .from(exams)
+    .where(eq(exams.user_id, user.id))
     .orderBy(sql`${exams.exam_date} DESC`);
 
   const classes = [

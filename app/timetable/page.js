@@ -4,8 +4,21 @@ import { db } from "@/lib/db";
 import { timetable } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import Link from "next/link";
+import { cookies } from "next/headers";
+import { getSession } from "@/lib/session";
+import { redirect } from "next/navigation";
+import { users } from "@/lib/schema";
+import { and } from "drizzle-orm";
 
 export default async function TimetablePage({ searchParams }) {
+  const cookieStore = await cookies();
+  const session = await getSession(cookieStore.get("session")?.value);
+  if (!session) redirect("/login");
+  const userResult = await db
+    .select()
+    .from(users)
+    .where(eq(users.email, session.email));
+  const user = userResult[0];
   const params = await searchParams;
   const selectedClass = params?.class || "";
 
@@ -40,7 +53,9 @@ export default async function TimetablePage({ searchParams }) {
     schedule = await db
       .select()
       .from(timetable)
-      .where(eq(timetable.class, selectedClass));
+      .where(
+        and(eq(timetable.class, selectedClass), eq(timetable.user_id, user.id)),
+      );
   }
 
   const scheduleMap = {};

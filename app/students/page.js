@@ -6,14 +6,30 @@ import { db } from "@/lib/db";
 import { students } from "@/lib/schema";
 import Link from "next/link";
 import { deleteStudent } from "@/app/actions";
+import { cookies } from "next/headers";
+import { getSession } from "@/lib/session";
+import { redirect } from "next/navigation";
+import { users } from "@/lib/schema";
+import { eq } from "drizzle-orm";
 
 export default async function StudentsPage({ searchParams }) {
+  const cookieStore = await cookies();
+  const session = await getSession(cookieStore.get("session")?.value);
+  if (!session) redirect("/login");
+  const userResult = await db
+    .select()
+    .from(users)
+    .where(eq(users.email, session.email));
+  const user = userResult[0];
   const params = await searchParams;
   const search = params?.search?.toLowerCase() || "";
   const selectedClass = params?.class || "";
   const selectedYear = params?.year || "";
 
-  const allStudents = await db.select().from(students);
+  const allStudents = await db
+    .select()
+    .from(students)
+    .where(eq(students.user_id, user.id));
   const classes = [...new Set(allStudents.map((s) => s.class))].sort();
   const years = [
     ...new Set(allStudents.map((s) => s.academic_year).filter(Boolean)),

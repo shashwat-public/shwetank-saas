@@ -6,11 +6,24 @@ import { db } from "@/lib/db";
 import { transport, student_transport, students } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import Link from "next/link";
+import { cookies } from "next/headers";
+import { getSession } from "@/lib/session";
+import { redirect } from "next/navigation";
+import { users } from "@/lib/schema";
 
 export default async function TransportPage() {
+  const cookieStore = await cookies();
+  const session = await getSession(cookieStore.get("session")?.value);
+  if (!session) redirect("/login");
+  const userResult = await db
+    .select()
+    .from(users)
+    .where(eq(users.email, session.email));
+  const user = userResult[0];
   const allRoutes = await db
     .select()
     .from(transport)
+    .where(eq(transport.user_id, user.id))
     .orderBy(transport.route_name);
 
   const allAssignments = await db

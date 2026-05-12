@@ -4,9 +4,26 @@ import { db } from "@/lib/db";
 import { teachers, timetable, teacher_subjects } from "@/lib/schema";
 import { deleteTeacher } from "@/app/actions";
 import Link from "next/link";
+import { cookies } from "next/headers";
+import { getSession } from "@/lib/session";
+import { redirect } from "next/navigation";
+import { users } from "@/lib/schema";
+import { eq } from "drizzle-orm";
 
 export default async function TeachersPage() {
-  const allTeachers = await db.select().from(teachers).orderBy(teachers.name);
+  const cookieStore = await cookies();
+  const session = await getSession(cookieStore.get("session")?.value);
+  if (!session) redirect("/login");
+  const userResult = await db
+    .select()
+    .from(users)
+    .where(eq(users.email, session.email));
+  const user = userResult[0];
+  const allTeachers = await db
+    .select()
+    .from(teachers)
+    .where(eq(teachers.user_id, user.id))
+    .orderBy(teachers.name);
   const allPeriods = await db.select().from(timetable);
 
   const allSubjects = await db.select().from(teacher_subjects);
