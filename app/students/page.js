@@ -68,6 +68,9 @@ export default async function StudentsPage({ searchParams }) {
             Total enrolled: <strong>{allStudents.length}</strong> · Showing:{" "}
             {filtered.length}
           </p>
+          <p className="text-amber-600 text-xs mt-1">
+            Click on a student to view concession & details.
+          </p>
         </div>
         <div className="flex gap-2">
           <Link
