@@ -3,9 +3,10 @@ import { NextResponse } from "next/server";
 
 export async function POST(request) {
   const formData = await request.formData();
-  const file = formData.get("logo");
+  const file = formData.get("photo") || formData.get("logo");
 
-  const { url } = await put(file.name, file, { access: "public" });
+  const filename = `${Date.now()}-${file.name}`;
+  const { url } = await put(filename, file, { access: "public" });
 
   return NextResponse.json({ url });
 }
