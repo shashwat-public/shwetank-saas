@@ -266,7 +266,12 @@ export async function saveParent(formData) {
   const existing = await db
     .select()
     .from(schema.parents)
-    .where(eq(schema.parents.student_id, student_id));
+    .where(
+      and(
+        eq(schema.parents.student_id, student_id),
+        eq(schema.parents.user_id, user.id),
+      ),
+    );
 
   if (existing.length > 0) {
     await db
@@ -409,6 +414,7 @@ export async function saveAttendance(formData) {
           and(
             eq(schema.attendance.student_id, parseInt(id)),
             eq(schema.attendance.date, date),
+            eq(schema.attendance.user_id, userId),
           ),
         );
     } else {
@@ -480,6 +486,7 @@ export async function saveResults(formData) {
           and(
             eq(schema.results.exam_id, exam_id),
             eq(schema.results.student_id, parseInt(sid)),
+            eq(schema.results.user_id, user.id),
           ),
         );
     } else {
